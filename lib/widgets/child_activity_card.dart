@@ -1,41 +1,71 @@
 import 'package:flutter/material.dart';
+import '../models/dashboard_model.dart';
 
 class ChildActivityCard extends StatelessWidget {
-  const ChildActivityCard({super.key});
+  final List<ChildInfo> children;
+
+  const ChildActivityCard({
+    super.key,
+    required this.children,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Sample activity data
-    final List<ActivityItem> activities = [
-      ActivityItem(
-        title: 'Class Participation',
-        icon: Icons.pan_tool,
-        count: 12,
-        color: Colors.blue,
-        subtitle: 'Active in class',
-      ),
-      ActivityItem(
-        title: 'Assignments',
-        icon: Icons.assignment,
-        count: 8,
-        color: Colors.green,
-        subtitle: 'Completed this week',
-      ),
-      ActivityItem(
-        title: 'Quizzes',
-        icon: Icons.quiz,
-        count: 5,
-        color: Colors.orange,
-        subtitle: 'Taken this month',
-      ),
-      ActivityItem(
-        title: 'Projects',
-        icon: Icons.work,
-        count: 3,
-        color: Colors.purple,
-        subtitle: 'In progress',
-      ),
-    ];
+    // Get all activities from all children
+    final allActivities = <ActivityInfo>[];
+    for (var child in children) {
+      allActivities.addAll(child.activities);
+    }
+
+    // Group activities by type and count
+    final activityCounts = <String, int>{};
+    for (var activity in allActivities) {
+      activityCounts[activity.eventType] =
+          (activityCounts[activity.eventType] ?? 0) + 1;
+    }
+
+    // Create activity items
+    final activityItems = <ActivityItem>[];
+    activityCounts.forEach((type, count) {
+      activityItems.add(_getActivityItem(type, count));
+    });
+
+    // If no activities, add placeholder
+    if (activityItems.isEmpty) {
+      activityItems.addAll([
+        ActivityItem(
+          title: 'Quizzes',
+          icon: Icons.quiz,
+          count: 0,
+          color: Colors.orange,
+          subtitle: 'No quizzes yet',
+        ),
+        ActivityItem(
+          title: 'Assignments',
+          icon: Icons.assignment,
+          count: 0,
+          color: Colors.green,
+          subtitle: 'No assignments yet',
+        ),
+        ActivityItem(
+          title: 'Lessons',
+          icon: Icons.book,
+          count: 0,
+          color: Colors.blue,
+          subtitle: 'No lessons yet',
+        ),
+        ActivityItem(
+          title: 'Projects',
+          icon: Icons.work,
+          count: 0,
+          color: Colors.purple,
+          subtitle: 'No projects yet',
+        ),
+      ]);
+    }
+
+    // Limit to 4 items for grid
+    final displayActivities = activityItems.take(4).toList();
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -71,23 +101,24 @@ class ChildActivityCard extends StatelessWidget {
                   ),
                 ],
               ),
-              TextButton(
-                onPressed: () {
-                  // Navigate to all activities
-                },
-                child: Text(
-                  'View All',
-                  style: TextStyle(
-                    color: Colors.purple[700],
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+              if (allActivities.length > 4)
+                TextButton(
+                  onPressed: () {
+                    // Navigate to all activities
+                  },
+                  child: Text(
+                    'View All',
+                    style: TextStyle(
+                      color: Colors.purple[700],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Activities Grid
           GridView.builder(
             shrinkWrap: true,
@@ -98,14 +129,59 @@ class ChildActivityCard extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.2,
             ),
-            itemCount: activities.length,
+            itemCount: displayActivities.length,
             itemBuilder: (context, index) {
-              return _buildActivityItem(activities[index]);
+              return _buildActivityItem(displayActivities[index]);
             },
           ),
         ],
       ),
     );
+  }
+
+  ActivityItem _getActivityItem(String type, int count) {
+    switch (type.toLowerCase()) {
+      case 'quiz':
+        return ActivityItem(
+          title: 'Quizzes',
+          icon: Icons.quiz,
+          count: count,
+          color: Colors.orange,
+          subtitle: '$count completed',
+        );
+      case 'assignment':
+        return ActivityItem(
+          title: 'Assignments',
+          icon: Icons.assignment,
+          count: count,
+          color: Colors.green,
+          subtitle: '$count completed',
+        );
+      case 'lesson':
+        return ActivityItem(
+          title: 'Lessons',
+          icon: Icons.book,
+          count: count,
+          color: Colors.blue,
+          subtitle: '$count viewed',
+        );
+      case 'project':
+        return ActivityItem(
+          title: 'Projects',
+          icon: Icons.work,
+          count: count,
+          color: Colors.purple,
+          subtitle: '$count in progress',
+        );
+      default:
+        return ActivityItem(
+          title: type.toUpperCase(),
+          icon: Icons.check_circle,
+          count: count,
+          color: Colors.grey,
+          subtitle: '$count activities',
+        );
+    }
   }
 
   Widget _buildActivityItem(ActivityItem activity) {
@@ -194,4 +270,3 @@ class ActivityItem {
     required this.subtitle,
   });
 }
-

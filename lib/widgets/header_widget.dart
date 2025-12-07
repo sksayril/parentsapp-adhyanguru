@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({super.key});
+  final String? parentName;
+  final String? profileImage;
+
+  const HeaderWidget({
+    super.key,
+    this.parentName,
+    this.profileImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,26 +47,53 @@ class HeaderWidget extends StatelessWidget {
                   ],
                 ),
                 child: ClipOval(
-                  child: Container(
-                    color: Colors.purple[100],
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.purple[300]!,
-                            Colors.purple[500]!,
-                          ],
+                  child: profileImage != null && profileImage!.isNotEmpty
+                      ? Image.network(
+                          profileImage!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.purple[100],
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.purple[300]!,
+                                      Colors.purple[500]!,
+                                    ],
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: Colors.purple[100],
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Colors.purple[300]!,
+                                  Colors.purple[500]!,
+                                ],
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.person,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  ),
                 ),
               ),
               // Online status indicator
@@ -87,9 +121,9 @@ class HeaderWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Hello, Rownok!',
-                  style: TextStyle(
+                Text(
+                  'Hello, ${parentName?.split(' ').first ?? 'User'}!',
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,

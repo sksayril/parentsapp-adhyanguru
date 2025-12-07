@@ -1,14 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../models/dashboard_model.dart';
 
 class ChildProgressChartCard extends StatelessWidget {
-  const ChildProgressChartCard({super.key});
+  final List<ChildInfo> children;
+  final String period;
+
+  const ChildProgressChartCard({
+    super.key,
+    required this.children,
+    this.period = '30d',
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Sample data for the chart (last 7 days)
-    final List<double> weeklyProgress = [65, 72, 68, 80, 75, 85, 78];
-    
+    // Get progress data from children
+    final progressData = children
+        .where((child) => child.progress != null)
+        .map((child) => child.progress!)
+        .toList();
+
+    // Calculate average progress for chart (simplified - using completion rate)
+    final avgProgress = progressData.isNotEmpty
+        ? progressData.map((p) => p.completionRate).reduce((a, b) => a + b) /
+            progressData.length
+        : 0.0;
+
+    // For chart, we'll use a simplified representation
+    // In a real app, you'd want to get historical data
+    final List<double> weeklyProgress = List.generate(7, (index) {
+      // Simulate weekly data based on average
+      return avgProgress + (index % 3 - 1) * 5;
+    });
+
+    final avgScore = progressData.isNotEmpty
+        ? progressData.map((p) => p.avgScore).reduce((a, b) => a + b) /
+            progressData.length
+        : 0.0;
+
+    final maxScore = progressData.isNotEmpty
+        ? progressData.map((p) => p.maxScore).reduce((a, b) => a > b ? a : b)
+        : 0.0;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -50,7 +83,7 @@ class ChildProgressChartCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  'This Week',
+                  period.toUpperCase(),
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.purple[700],
@@ -61,117 +94,136 @@ class ChildProgressChartCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          
+
           // Chart
           SizedBox(
             height: 200,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 20,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: Colors.grey[200]!,
-                      strokeWidth: 1,
-                    );
-                  },
-                ),
-                titlesData: FlTitlesData(
-                  show: true,
-                  rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      interval: 1,
-                      getTitlesWidget: (value, meta) {
-                        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                        if (value.toInt() >= 0 && value.toInt() < days.length) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              days[value.toInt()],
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
-                              ),
-                            ),
+            child: weeklyProgress.isNotEmpty
+                ? LineChart(
+                    LineChartData(
+                      gridData: FlGridData(
+                        show: true,
+                        drawVerticalLine: false,
+                        horizontalInterval: 20,
+                        getDrawingHorizontalLine: (value) {
+                          return FlLine(
+                            color: Colors.grey[200]!,
+                            strokeWidth: 1,
                           );
-                        }
-                        return const Text('');
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 20,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          '${value.toInt()}%',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
+                        },
+                      ),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 30,
+                            interval: 1,
+                            getTitlesWidget: (value, meta) {
+                              const days = [
+                                'Mon',
+                                'Tue',
+                                'Wed',
+                                'Thu',
+                                'Fri',
+                                'Sat',
+                                'Sun'
+                              ];
+                              if (value.toInt() >= 0 &&
+                                  value.toInt() < days.length) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    days[value.toInt()],
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const Text('');
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                borderData: FlBorderData(
-                  show: true,
-                  border: Border.all(color: Colors.grey[200]!),
-                ),
-                minX: 0,
-                maxX: 6,
-                minY: 0,
-                maxY: 100,
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: weeklyProgress.asMap().entries.map((entry) {
-                      return FlSpot(entry.key.toDouble(), entry.value);
-                    }).toList(),
-                    isCurved: true,
-                    color: Colors.purple,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        return FlDotCirclePainter(
-                          radius: 5,
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            interval: 20,
+                            reservedSize: 40,
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                '${value.toInt()}%',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      borderData: FlBorderData(
+                        show: true,
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      minX: 0,
+                      maxX: 6,
+                      minY: 0,
+                      maxY: 100,
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: weeklyProgress.asMap().entries.map((entry) {
+                            return FlSpot(entry.key.toDouble(), entry.value);
+                          }).toList(),
+                          isCurved: true,
                           color: Colors.purple,
-                          strokeWidth: 2,
-                          strokeColor: Colors.white,
-                        );
-                      },
+                          barWidth: 3,
+                          isStrokeCapRound: true,
+                          dotData: FlDotData(
+                            show: true,
+                            getDotPainter: (spot, percent, barData, index) {
+                              return FlDotCirclePainter(
+                                radius: 5,
+                                color: Colors.purple,
+                                strokeWidth: 2,
+                                strokeColor: Colors.white,
+                              );
+                            },
+                          ),
+                          belowBarData: BarAreaData(
+                            show: true,
+                            color: Colors.purple.withValues(alpha: 0.1),
+                          ),
+                        ),
+                      ],
                     ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: Colors.purple.withValues(alpha: 0.1),
+                  )
+                : Center(
+                    child: Text(
+                      'No progress data available',
+                      style: TextStyle(color: Colors.grey[600]),
                     ),
                   ),
-                ],
-              ),
-            ),
           ),
           const SizedBox(height: 16),
-          
+
           // Summary Stats
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatItem('Average', '${(weeklyProgress.reduce((a, b) => a + b) / weeklyProgress.length).toStringAsFixed(0)}%', Colors.blue),
-              _buildStatItem('Highest', '${weeklyProgress.reduce((a, b) => a > b ? a : b).toStringAsFixed(0)}%', Colors.green),
-              _buildStatItem('This Week', '+5%', Colors.purple),
+              _buildStatItem(
+                  'Average', '${avgScore.toStringAsFixed(0)}%', Colors.blue),
+              _buildStatItem(
+                  'Highest', '${maxScore.toStringAsFixed(0)}%', Colors.green),
+              _buildStatItem('Completion',
+                  '${avgProgress.toStringAsFixed(0)}%', Colors.purple),
             ],
           ),
         ],
@@ -202,4 +254,3 @@ class ChildProgressChartCard extends StatelessWidget {
     );
   }
 }
-

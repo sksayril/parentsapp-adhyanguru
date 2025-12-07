@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
+import '../models/dashboard_model.dart';
 
 class ChildCoursesCard extends StatelessWidget {
-  const ChildCoursesCard({super.key});
+  final List<ChildInfo> children;
+
+  const ChildCoursesCard({
+    super.key,
+    required this.children,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Sample courses data
-    final List<CourseItem> courses = [
-      CourseItem(
-        title: 'Mathematics',
-        progress: 0.75,
-        instructor: 'Mr. Sharma',
-        color: Colors.blue,
-      ),
-      CourseItem(
-        title: 'Science',
-        progress: 0.60,
-        instructor: 'Ms. Patel',
-        color: Colors.green,
-      ),
-      CourseItem(
-        title: 'English',
-        progress: 0.85,
-        instructor: 'Mr. Kumar',
-        color: Colors.orange,
-      ),
+    // Get all courses from all children
+    final allCourses = <CourseEnrollment>[];
+    for (var child in children) {
+      allCourses.addAll(child.courses);
+    }
+
+    // Limit to first 3 courses for display
+    final displayCourses = allCourses.take(3).toList();
+
+    // Color palette for courses
+    final colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.red,
+      Colors.teal,
     ];
 
     return Container(
@@ -61,39 +64,64 @@ class ChildCoursesCard extends StatelessWidget {
                   ),
                 ],
               ),
-              TextButton(
-                onPressed: () {
-                  // Navigate to all courses
-                },
-                child: Text(
-                  'View All',
-                  style: TextStyle(
-                    color: Colors.purple[700],
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+              if (allCourses.length > 3)
+                TextButton(
+                  onPressed: () {
+                    // Navigate to all courses
+                  },
+                  child: Text(
+                    'View All (${allCourses.length})',
+                    style: TextStyle(
+                      color: Colors.purple[700],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Courses List
-          ...courses.map((course) => _buildCourseItem(course)).toList(),
+          displayCourses.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Text(
+                      'No courses enrolled yet',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                )
+              : Column(
+                  children: displayCourses
+                      .asMap()
+                      .entries
+                      .map((entry) {
+                        final index = entry.key;
+                        final course = entry.value;
+                        final color = colors[index % colors.length];
+                        return _buildCourseItem(course, color);
+                      })
+                      .toList(),
+                ),
         ],
       ),
     );
   }
 
-  Widget _buildCourseItem(CourseItem course) {
+  Widget _buildCourseItem(CourseEnrollment course, Color color) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: course.color.withValues(alpha: 0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: course.color.withValues(alpha: 0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -108,7 +136,7 @@ class ChildCoursesCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      course.title,
+                      course.course.title,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -117,7 +145,7 @@ class ChildCoursesCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      course.instructor,
+                      'Batch: ${course.batch.title}',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -129,10 +157,10 @@ class ChildCoursesCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: course.color,
+                  color: color,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.book,
                   color: Colors.white,
                   size: 20,
@@ -148,41 +176,34 @@ class ChildCoursesCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
-                    value: course.progress,
+                    value: course.progress.percentage / 100,
                     backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(course.color),
+                    valueColor: AlwaysStoppedAnimation<Color>(color),
                     minHeight: 8,
                   ),
                 ),
               ),
               const SizedBox(width: 12),
               Text(
-                '${(course.progress * 100).toInt()}%',
+                '${course.progress.percentage.toStringAsFixed(0)}%',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: course.color,
+                  color: color,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${course.progress.lessonsCompleted} of ${course.progress.totalLessons} lessons completed',
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+            ),
           ),
         ],
       ),
     );
   }
 }
-
-class CourseItem {
-  final String title;
-  final double progress;
-  final String instructor;
-  final Color color;
-
-  CourseItem({
-    required this.title,
-    required this.progress,
-    required this.instructor,
-    required this.color,
-  });
-}
-
