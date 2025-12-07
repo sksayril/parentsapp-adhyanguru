@@ -175,10 +175,19 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.school,
-                          size: 60,
-                          color: Colors.purple[700],
+                        child: Image.asset(
+                          'assets/images/parentsapplogo.png',
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Fallback to icon if image not found
+                            return Icon(
+                              Icons.school,
+                              size: 60,
+                              color: Colors.purple[700],
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: 30),

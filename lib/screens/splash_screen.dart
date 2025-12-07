@@ -151,10 +151,19 @@ class _SplashScreenState extends State<SplashScreen>
                       ],
                     ),
                     child: Center(
-                      child: Icon(
-                        Icons.school,
-                        size: 60,
-                        color: Colors.purple[700],
+                      child: Image.asset(
+                        'assets/images/parentsapplogo.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          // Fallback to icon if image not found
+                          return Icon(
+                            Icons.school,
+                            size: 60,
+                            color: Colors.purple[700],
+                          );
+                        },
                       ),
                     ),
                   ),
