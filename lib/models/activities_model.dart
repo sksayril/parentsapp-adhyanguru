@@ -94,15 +94,19 @@ class ActivityItem {
   factory ActivityItem.fromJson(Map<String, dynamic> json) {
     return ActivityItem(
       id: _extractId(json['id'] ?? json['_id']),
-      student: ChildInfo.fromJson(json['student'] as Map<String, dynamic>),
+      student: ChildInfo.fromJson(
+        json['student'] is Map<String, dynamic>
+          ? json['student'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       eventType: json['eventType']?.toString() ?? '',
-      course: json['course'] != null
+      course: json['course'] != null && json['course'] is Map<String, dynamic>
           ? CourseInfo.fromJson(json['course'] as Map<String, dynamic>)
           : null,
-      batch: json['batch'] != null
+      batch: json['batch'] != null && json['batch'] is Map<String, dynamic>
           ? BatchInfo.fromJson(json['batch'] as Map<String, dynamic>)
           : null,
-      lesson: json['lesson'] != null
+      lesson: json['lesson'] != null && json['lesson'] is Map<String, dynamic>
           ? LessonInfo.fromJson(json['lesson'] as Map<String, dynamic>)
           : null,
       value: json['value'] is Map<String, dynamic>
@@ -187,14 +191,22 @@ class ActivitiesByStudent {
 
   factory ActivitiesByStudent.fromJson(Map<String, dynamic> json) {
     return ActivitiesByStudent(
-      student: ChildInfo.fromJson(json['student'] as Map<String, dynamic>),
+      student: ChildInfo.fromJson(
+        json['student'] is Map<String, dynamic>
+          ? json['student'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       count: (json['count'] is int)
           ? json['count'] as int
           : (json['count'] is num)
               ? (json['count'] as num).toInt()
               : 0,
       activities: (json['activities'] as List? ?? [])
-          .map((activity) => ActivityItem.fromJson(activity as Map<String, dynamic>))
+          .map((activity) => ActivityItem.fromJson(
+            activity is Map<String, dynamic>
+              ? activity as Map<String, dynamic>
+              : <String, dynamic>{},
+          ))
           .toList(),
     );
   }

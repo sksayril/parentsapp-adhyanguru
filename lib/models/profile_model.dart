@@ -24,11 +24,23 @@ class ProfileResponse {
 
   factory ProfileResponse.fromJson(Map<String, dynamic> json) {
     return ProfileResponse(
-      parent: ParentProfileInfo.fromJson(json['parent'] as Map<String, dynamic>),
+      parent: ParentProfileInfo.fromJson(
+        json['parent'] is Map<String, dynamic>
+          ? json['parent'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       children: (json['children'] as List? ?? [])
-          .map((child) => ChildProfileInfo.fromJson(child as Map<String, dynamic>))
+          .map((child) => ChildProfileInfo.fromJson(
+            child is Map<String, dynamic>
+              ? child as Map<String, dynamic>
+              : <String, dynamic>{},
+          ))
           .toList(),
-      summary: ProfileSummary.fromJson(json['summary'] as Map<String, dynamic>),
+      summary: ProfileSummary.fromJson(
+        json['summary'] is Map<String, dynamic>
+          ? json['summary'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
     );
   }
 }
@@ -121,21 +133,29 @@ class ChildProfileInfo {
       email: json['email']?.toString() ?? '',
       contactNumber: json['contactNumber']?.toString() ?? '',
       profileImage: json['profileImage']?.toString(),
-      studentLevel: json['studentLevel'] != null
+      studentLevel: json['studentLevel'] != null && json['studentLevel'] is Map<String, dynamic>
           ? StudentLevelInfo.fromJson(json['studentLevel'] as Map<String, dynamic>)
           : null,
-      board: json['board'] != null
+      board: json['board'] != null && json['board'] is Map<String, dynamic>
           ? BoardInfo.fromJson(json['board'] as Map<String, dynamic>)
           : null,
-      classInfo: json['class'] != null
+      classInfo: json['class'] != null && json['class'] is Map<String, dynamic>
           ? ClassInfo.fromJson(json['class'] as Map<String, dynamic>)
           : null,
       stream: json['stream']?.toString(),
       degree: json['degree']?.toString(),
       createdAt: json['createdAt']?.toString(),
       updatedAt: json['updatedAt']?.toString(),
-      subscriptions: SubscriptionsInfo.fromJson(json['subscriptions'] as Map<String, dynamic>),
-      enrollments: EnrollmentsInfo.fromJson(json['enrollments'] as Map<String, dynamic>),
+      subscriptions: SubscriptionsInfo.fromJson(
+        json['subscriptions'] is Map<String, dynamic>
+          ? json['subscriptions'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
+      enrollments: EnrollmentsInfo.fromJson(
+        json['enrollments'] is Map<String, dynamic>
+          ? json['enrollments'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       hasActiveSubscription: json['hasActiveSubscription'] == true,
       canEnrollInCourses: json['canEnrollInCourses'] == true,
     );
@@ -218,9 +238,13 @@ class SubscriptionsInfo {
   factory SubscriptionsInfo.fromJson(Map<String, dynamic> json) {
     return SubscriptionsInfo(
       all: (json['all'] as List? ?? [])
-          .map((sub) => SubscriptionInfo.fromJson(sub as Map<String, dynamic>))
+          .map((sub) => SubscriptionInfo.fromJson(
+            sub is Map<String, dynamic>
+              ? sub as Map<String, dynamic>
+              : <String, dynamic>{},
+          ))
           .toList(),
-      active: json['active'] != null
+      active: json['active'] != null && json['active'] is Map<String, dynamic>
           ? SubscriptionInfo.fromJson(json['active'] as Map<String, dynamic>)
           : null,
       total: (json['total'] is int)
@@ -292,10 +316,10 @@ class SubscriptionInfo {
       originalAmount: (json['originalAmount'] ?? 0).toDouble(),
       discountAmount: (json['discountAmount'] ?? 0).toDouble(),
       finalAmount: (json['finalAmount'] ?? 0).toDouble(),
-      coupon: json['coupon'] != null
+      coupon: json['coupon'] != null && json['coupon'] is Map<String, dynamic>
           ? CouponInfo.fromJson(json['coupon'] as Map<String, dynamic>)
           : null,
-      plan: json['plan'] != null
+      plan: json['plan'] != null && json['plan'] is Map<String, dynamic>
           ? PlanInfo.fromJson(json['plan'] as Map<String, dynamic>)
           : null,
       startDate: json['startDate']?.toString(),
@@ -395,13 +419,25 @@ class EnrollmentsInfo {
   factory EnrollmentsInfo.fromJson(Map<String, dynamic> json) {
     return EnrollmentsInfo(
       all: (json['all'] as List? ?? [])
-          .map((enrollment) => EnrollmentInfo.fromJson(enrollment as Map<String, dynamic>))
+          .map((enrollment) => EnrollmentInfo.fromJson(
+            enrollment is Map<String, dynamic>
+              ? enrollment as Map<String, dynamic>
+              : <String, dynamic>{},
+          ))
           .toList(),
       active: (json['active'] as List? ?? [])
-          .map((enrollment) => EnrollmentInfo.fromJson(enrollment as Map<String, dynamic>))
+          .map((enrollment) => EnrollmentInfo.fromJson(
+            enrollment is Map<String, dynamic>
+              ? enrollment as Map<String, dynamic>
+              : <String, dynamic>{},
+          ))
           .toList(),
       completed: (json['completed'] as List? ?? [])
-          .map((enrollment) => EnrollmentInfo.fromJson(enrollment as Map<String, dynamic>))
+          .map((enrollment) => EnrollmentInfo.fromJson(
+            enrollment is Map<String, dynamic>
+              ? enrollment as Map<String, dynamic>
+              : <String, dynamic>{},
+          ))
           .toList(),
       total: (json['total'] is int)
           ? json['total'] as int
@@ -454,13 +490,25 @@ class EnrollmentInfo {
   factory EnrollmentInfo.fromJson(Map<String, dynamic> json) {
     return EnrollmentInfo(
       id: _extractId(json['id'] ?? json['_id']),
-      course: CourseInfo.fromJson(json['course'] as Map<String, dynamic>),
-      batch: BatchInfo.fromJson(json['batch'] as Map<String, dynamic>),
+      course: CourseInfo.fromJson(
+        json['course'] is Map<String, dynamic>
+          ? json['course'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
+      batch: BatchInfo.fromJson(
+        json['batch'] is Map<String, dynamic>
+          ? json['batch'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       enrolledVia: json['enrolledVia']?.toString() ?? 'direct',
       pricePaid: (json['pricePaid'] ?? 0).toDouble(),
       couponUsed: json['couponUsed']?.toString(),
       couponDiscount: (json['couponDiscount'] ?? 0).toDouble(),
-      progress: EnrollmentProgress.fromJson(json['progress'] as Map<String, dynamic>),
+      progress: EnrollmentProgress.fromJson(
+        json['progress'] is Map<String, dynamic>
+          ? json['progress'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       status: json['status']?.toString() ?? 'active',
       enrolledAt: json['enrolledAt']?.toString(),
       completedAt: json['completedAt']?.toString(),

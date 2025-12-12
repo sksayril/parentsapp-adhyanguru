@@ -266,27 +266,31 @@ class _ActivityScreenState extends State<ActivityScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Activity',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Activity',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Track your children\'s activities',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+                const SizedBox(height: 4),
+                Text(
+                  'Track your children\'s activities',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          const SizedBox(width: 12),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -335,6 +339,8 @@ class _ActivityScreenState extends State<ActivityScreen> {
             height: 40,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
               itemCount: eventTypes.length,
               itemBuilder: (context, index) {
                 final eventType = eventTypes[index];
@@ -343,7 +349,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     : _selectedEventType == eventType;
                 
                 return Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                  padding: EdgeInsets.only(right: index < eventTypes.length - 1 ? 8 : 0),
                   child: FilterChip(
                     label: Text(eventType),
                     selected: isSelected,
@@ -547,20 +553,16 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           color: Colors.purple[700],
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          activity.student.name,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.purple[700],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '(${activity.student.studentId})',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[600],
+                        Expanded(
+                          child: Text(
+                            '${activity.student.name} (${activity.student.studentId})',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.purple[700],
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ),
                       ],
@@ -574,6 +576,8 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if (description.isNotEmpty) ...[
                       const SizedBox(height: 4),
@@ -583,6 +587,8 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           fontSize: 14,
                           color: Colors.grey[600],
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                     const SizedBox(height: 8),
@@ -590,24 +596,31 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     Row(
                       children: [
                         if (activity.tags.isNotEmpty) ...[
-                          ...activity.tags.take(2).map((tag) => Container(
-                                margin: const EdgeInsets.only(right: 6),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  tag,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey[700],
-                                  ),
-                                ),
-                              )),
+                          Flexible(
+                            child: Wrap(
+                              spacing: 6,
+                              runSpacing: 4,
+                              children: activity.tags.take(2).map((tag) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      tag,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey[700],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  )).toList(),
+                            ),
+                          ),
                           const SizedBox(width: 8),
                         ],
                         Icon(
@@ -616,11 +629,15 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           color: Colors.grey[500],
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          _formatTimeAgo(activity.createdAt),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[500],
+                        Flexible(
+                          child: Text(
+                            _formatTimeAgo(activity.createdAt),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[500],
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ),
                       ],

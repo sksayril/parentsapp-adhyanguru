@@ -25,11 +25,23 @@ class DashboardModel {
 
   factory DashboardModel.fromJson(Map<String, dynamic> json) {
     return DashboardModel(
-      parent: ParentInfo.fromJson(json['parent'] as Map<String, dynamic>),
+      parent: ParentInfo.fromJson(
+        json['parent'] is Map<String, dynamic> 
+          ? json['parent'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       children: (json['children'] as List? ?? [])
-          .map((child) => ChildInfo.fromJson(child as Map<String, dynamic>))
+          .map((child) => ChildInfo.fromJson(
+            child is Map<String, dynamic> 
+              ? child as Map<String, dynamic>
+              : <String, dynamic>{},
+          ))
           .toList(),
-      overallStats: OverallStats.fromJson(json['overallStats'] as Map<String, dynamic>),
+      overallStats: OverallStats.fromJson(
+        json['overallStats'] is Map<String, dynamic>
+          ? json['overallStats'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
     );
   }
 }
@@ -359,9 +371,21 @@ class CourseEnrollment {
   factory CourseEnrollment.fromJson(Map<String, dynamic> json) {
     return CourseEnrollment(
       id: _extractId(json['id'] ?? json['_id']),
-      course: CourseInfo.fromJson(json['course'] as Map<String, dynamic>),
-      batch: BatchInfo.fromJson(json['batch'] as Map<String, dynamic>),
-      progress: CourseProgress.fromJson(json['progress'] as Map<String, dynamic>),
+      course: CourseInfo.fromJson(
+        json['course'] is Map<String, dynamic>
+          ? json['course'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
+      batch: BatchInfo.fromJson(
+        json['batch'] is Map<String, dynamic>
+          ? json['batch'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
+      progress: CourseProgress.fromJson(
+        json['progress'] is Map<String, dynamic>
+          ? json['progress'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       status: json['status']?.toString() ?? 'active',
       enrolledAt: json['enrolledAt']?.toString(),
       lastAccessedAt: json['lastAccessedAt']?.toString(),

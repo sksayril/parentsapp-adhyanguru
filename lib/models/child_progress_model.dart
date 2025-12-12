@@ -71,13 +71,29 @@ class ChildProgressResponse {
 
   factory ChildProgressResponse.fromJson(Map<String, dynamic> json) {
     return ChildProgressResponse(
-      student: StudentInfo.fromJson(json['student'] as Map<String, dynamic>),
-      summary: ProgressSummary.fromJson(json['summary'] as Map<String, dynamic>),
+      student: StudentInfo.fromJson(
+        json['student'] is Map<String, dynamic>
+          ? json['student'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
+      summary: ProgressSummary.fromJson(
+        json['summary'] is Map<String, dynamic>
+          ? json['summary'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       enrollments: (json['enrollments'] as List? ?? [])
-          .map((enrollment) => EnrollmentInfo.fromJson(enrollment as Map<String, dynamic>))
+          .map((enrollment) => EnrollmentInfo.fromJson(
+            enrollment is Map<String, dynamic>
+              ? enrollment as Map<String, dynamic>
+              : <String, dynamic>{},
+          ))
           .toList(),
       period: json['period']?.toString() ?? '30d',
-      filters: ProgressFilters.fromJson(json['filters'] as Map<String, dynamic>? ?? {}),
+      filters: ProgressFilters.fromJson(
+        json['filters'] is Map<String, dynamic>
+          ? json['filters'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
     );
   }
 }
@@ -113,13 +129,13 @@ class StudentInfo {
       email: json['email']?.toString() ?? '',
       contactNumber: json['contactNumber']?.toString() ?? '',
       profileImage: json['profileImage']?.toString(),
-      studentLevel: json['studentLevel'] != null
+      studentLevel: json['studentLevel'] != null && json['studentLevel'] is Map<String, dynamic>
           ? StudentLevelInfo.fromJson(json['studentLevel'] as Map<String, dynamic>)
           : null,
-      board: json['board'] != null
+      board: json['board'] != null && json['board'] is Map<String, dynamic>
           ? BoardInfo.fromJson(json['board'] as Map<String, dynamic>)
           : null,
-      classInfo: json['class'] != null
+      classInfo: json['class'] != null && json['class'] is Map<String, dynamic>
           ? ClassInfo.fromJson(json['class'] as Map<String, dynamic>)
           : null,
     );
@@ -267,9 +283,21 @@ class EnrollmentInfo {
   factory EnrollmentInfo.fromJson(Map<String, dynamic> json) {
     return EnrollmentInfo(
       id: _extractId(json['id'] ?? json['_id']),
-      course: CourseInfo.fromJson(json['course'] as Map<String, dynamic>),
-      batch: BatchInfo.fromJson(json['batch'] as Map<String, dynamic>),
-      progress: EnrollmentProgress.fromJson(json['progress'] as Map<String, dynamic>),
+      course: CourseInfo.fromJson(
+        json['course'] is Map<String, dynamic>
+          ? json['course'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
+      batch: BatchInfo.fromJson(
+        json['batch'] is Map<String, dynamic>
+          ? json['batch'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
+      progress: EnrollmentProgress.fromJson(
+        json['progress'] is Map<String, dynamic>
+          ? json['progress'] as Map<String, dynamic>
+          : <String, dynamic>{},
+      ),
       status: json['status']?.toString() ?? 'active',
       enrolledAt: json['enrolledAt']?.toString(),
       lastAccessedAt: json['lastAccessedAt']?.toString(),

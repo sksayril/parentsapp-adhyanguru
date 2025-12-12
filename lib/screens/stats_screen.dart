@@ -292,7 +292,8 @@ class _StatsScreenState extends State<StatsScreen> {
     return Row(
       children: [
         // Period Selector
-        Expanded(
+        Flexible(
+          flex: 2,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
@@ -310,28 +311,33 @@ class _StatsScreenState extends State<StatsScreen> {
                     color: Colors.black87,
                   ),
                 ),
-                ...['7d', '30d', '90d', '1y'].map((period) {
-                  final isSelected = _selectedPeriod == period;
-                  return GestureDetector(
-                    onTap: () => _onPeriodChanged(period),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.purple : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        period.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: isSelected ? Colors.white : Colors.grey[700],
+                Flexible(
+                  child: Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: ['7d', '30d', '90d', '1y'].map((period) {
+                      final isSelected = _selectedPeriod == period;
+                      return GestureDetector(
+                        onTap: () => _onPeriodChanged(period),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.purple : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            period.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected ? Colors.white : Colors.grey[700],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ],
             ),
           ),
@@ -339,7 +345,8 @@ class _StatsScreenState extends State<StatsScreen> {
         const SizedBox(width: 12),
         // Course Filter
         if (_progressData != null && _progressData!.enrollments.isNotEmpty)
-          Expanded(
+          Flexible(
+            flex: 3,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
@@ -351,12 +358,21 @@ class _StatsScreenState extends State<StatsScreen> {
                 child: DropdownButton<String?>(
                   value: _selectedCourseId,
                   isExpanded: true,
-                  hint: const Text('All Courses', style: TextStyle(fontSize: 14)),
+                  hint: const Text(
+                    'All Courses',
+                    style: TextStyle(fontSize: 14),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                   icon: Icon(Icons.arrow_drop_down, color: Colors.purple[700]),
                   items: [
                     const DropdownMenuItem<String?>(
                       value: null,
-                      child: Text('All Courses'),
+                      child: Text(
+                        'All Courses',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
                     ..._progressData!.enrollments.map((enrollment) {
                       return DropdownMenuItem<String?>(
@@ -365,6 +381,7 @@ class _StatsScreenState extends State<StatsScreen> {
                           enrollment.course.title,
                           style: const TextStyle(fontSize: 14),
                           overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       );
                     }),

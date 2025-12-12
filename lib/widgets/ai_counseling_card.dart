@@ -17,19 +17,22 @@ class AICounselingCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(Icons.psychology, color: Colors.purple[700], size: 24),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'AI Counseling',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(Icons.psychology, color: Colors.purple[700], size: 24),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'AI Counseling',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
